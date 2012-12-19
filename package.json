@@ -1,0 +1,19 @@
+{
+  "name": "netaphorSearchClient",
+  "version": "0.1.0",
+  "description": "A module for easy communication with the Netaphor search API",
+  "main": "netaphorConnector.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/netaphor/nodeSearchConnector.git"
+  },
+  "keywords": [
+    "netaphor",
+    "solr"
+  ],
+  "author": "Richard Still",
+  "license": "BSD"
+}
