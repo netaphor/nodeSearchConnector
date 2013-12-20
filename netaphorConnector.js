@@ -1,20 +1,20 @@
-/* global console: true */
-var https = require('https'),
-	util = require('util'),
-	EventEmitter = require('events').EventEmitter;
-
+var request = require('request'),
+	_ = require('lodash');
 
 // Define the NetaphorConnector class used for communication with a Netaphor server
 var NetaphorConnector =  function (config) {
 	'use strict';
-	var key;
-	for (key in config) {
-		this.state[key] = config[key];
-	}
-};
+	this.state = {
+		searchServer:		'www.netaphorsearch.com',
+		backupServer:		'b1.netaphorsearch.com',
+		clientId:			'',
+		username:			'',
+		password:			'',
+		firstRequestFailed: false
+	};
 
-// Inherit form the Events module so that we can emit custom events
-util.inherits(NetaphorConnector, EventEmitter);
+	_.merge(config, this.state);
+};
 
 // The list if REST urls used for communitcation with the Netaphor search servers
 NetaphorConnector.prototype.restUrls = {
@@ -27,141 +27,79 @@ NetaphorConnector.prototype.restUrls = {
 	del:				"/update/post"
 };
 
-// State required for this class to work
-NetaphorConnector.prototype.state = {
-	searchServer:		'',
-	backupServer:		'b1.netaphorsearch.com',
-	clientId:			'',
-	username:			'',
-	password:			'',
-	firstRequestFailed: false
-};
-
 // Query the search index
-NetaphorConnector.prototype.search = function (queryString) {
+NetaphorConnector.prototype.search = function (queryString, callBack) {
 	'use strict';
 	var options = {};
+	options.callBack = callBack;
 	options.query = this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.select + queryString;
-	options.eventName = 'searchComplete';
 	this.doRequest(options);
 };
 
 // Post data to the search index
-NetaphorConnector.prototype.update = function (postData) {
+NetaphorConnector.prototype.update = function (postData, callBack) {
 	'use strict';
 	var options = {};
+	options.callBack = callBack;
 	options.query = this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.update;
 	options.postData = postData;
-	options.eventName = 'updateComplete';
 	this.doRequest(options);
 };
 
 // Commit any chages made to the search index
-NetaphorConnector.prototype.commit = function () {
+NetaphorConnector.prototype.commit = function (callBack) {
 	'use strict';
 	var options = {};
+	options.callBack = callBack;
 	options.query = this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.commit;
-	options.eventName = 'commitComplete';
 	this.doRequest(options);
 };
 
 // Optimize the search index
-NetaphorConnector.prototype.optimize = function () {
+NetaphorConnector.prototype.optimize = function (callBack) {
 	'use strict';
 	var options = {};
+	options.callBack = callBack;
 	options.query = this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.optimize;
-	options.eventName = 'optimizeComplete';
 	this.doRequest(options);
 };
 
-
 // Delete an item from the search index
-NetaphorConnector.prototype.deleteItem = function (itemId) {
+NetaphorConnector.prototype.deleteItem = function (itemId, callBack) {
 	'use strict';
 	var options = {};
+	options.callBack = callBack;
 	options.query = this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.optimize;
-	options.eventName = 'deleteComplete';
 	this.doRequest(options);
 };
 
 // Handle the HTTP communitcation with the search servers
-NetaphorConnector.prototype.doRequest = function (options) { //query, callBack, postData
+NetaphorConnector.prototype.doRequest = function (options) {
 	'use strict';
-	var reqOptions = {},
-		responseText = '',
-		request,
-		self = this;
+	var requestConfig = {};
 
-	reqOptions.hostname		= this.state.searchServer;
-	reqOptions.path			= options.query;
-	reqOptions.method		= 'GET';
-	reqOptions.headers		= {
-							'Authorization': 'Basic ' + new Buffer(this.state.username + ':' + this.state.password).toString('base64')
-						};
-
-	console.log(reqOptions);
-
-	if (typeof options.postData !== 'undefined') {
-		reqOptions.method = 'POST';
+	if (options.postData !== 'undefined') {
+		requestConfig.method = 'POST';
+		requestConfig.body = options.postData;
 	}
 
-	request = https.request(reqOptions);
+	requestConfig.auth = {
+		user: this.state.username,
+		pass: this.state.password,
+		sendImmediately: false
+	};
 
-	request.on('response', function (response) {
-		response.on('data', function (data) {
-			responseText += data;
-		});
+	requestConfig.url = 'https://' + this.state.searchServer + options.query;
 
-		response.on('end', function () {
-			self.emit(options.eventName, responseText);
-		});
+	request(requestConfig, function (error, response, body) {
+		console.log(response.statusCode, body);
+		if (!error && response.statusCode === 200) {
+			options.callBack(null, body);
+		} else {
+			options.callBack(error, body);
+		}
 	});
-
-	request.on('error', function (error) {
-		self.emit('error', responseText);
-	});
-
-	if (typeof options.postData !== 'undefined') {
-		request.write(options.postData);
-	}
-
-	request.end();
 };
 
 
 exports.NetaphorConnector = NetaphorConnector;
-/*
-
-	public function search($query, $requestHandler, $extras = "") {
-		$requestString = $this -> getQueryUri("select") . "?q=" . urlencode($query) . "&qt=" . $requestHandler . $extras;
-		$this -> query = $requestString;
-		$this -> handleResponse($this -> sendRequest($requestString));
-	}
-
-	public function update($data) {
-		$requestString = $this -> getQueryUri("update");
-		$this -> handleResponse($this -> sendRequest($requestString, $data));
-	}
-
-	public function commit() {
-		$requestString = $this -> getQueryUri("commit");
-		$this -> handleResponse($this -> sendRequest($requestString));
-	}
-
-	public function optimize() {
-		$requestString = $this -> getQueryUri("optimize");
-		$this -> handleResponse($this -> sendRequest($requestString));
-	}
-
-	public function commitAndOptimize() {
-		$requestString = $this -> getQueryUri("commitAndOptimize");
-		$this -> handleResponse($this -> sendRequest($requestString));
-	}
-
-	public function deleteItem($item) {
-		$requestString = $this -> getQueryUri("delete");
-		$postData = "<delete><id>" . $item . "</id></delete>";
-		$this -> handleResponse($this -> sendRequest($requestString, $postData));
-	}
-
-*/
