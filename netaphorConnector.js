@@ -6,17 +6,14 @@ var NetaphorConnector =  function (config) {
 	'use strict';
 	this.state = {
 		searchServer:		'www.netaphorsearch.com',
-		backupServer:		'b1.netaphorsearch.com',
 		clientId:			'',
 		username:			'',
-		password:			'',
-		firstRequestFailed: false
+		password:			''
 	};
-
-	_.merge(config, this.state);
+	this.state = _.merge(this.state, config);
 };
 
-// The list if REST urls used for communitcation with the Netaphor search servers
+// The list if REST urls used for communication with the Netaphor search servers
 NetaphorConnector.prototype.restUrls = {
 	rootPath:			"/search",
 	commit:				"/update/commit",
@@ -78,6 +75,7 @@ NetaphorConnector.prototype.doRequest = function (options) {
 	'use strict';
 	var requestConfig = {};
 
+	// If we are updating the search index switch to POST
 	if (options.postData !== 'undefined') {
 		requestConfig.method = 'POST';
 		requestConfig.body = options.postData;
@@ -91,15 +89,19 @@ NetaphorConnector.prototype.doRequest = function (options) {
 
 	requestConfig.url = 'https://' + this.state.searchServer + options.query;
 
-	request(requestConfig, function (error, response, body) {
-		console.log(response.statusCode, body);
-		if (!error && response.statusCode === 200) {
+	request(requestConfig, function (error, res, body) {
+		if (!error && res.statusCode === 200) {
 			options.callBack(null, body);
 		} else {
+			if (!error) {
+				error = {
+					msg: 'Non 200 response',
+					statusCode: res.statusCode
+				}
+			}
 			options.callBack(error, body);
 		}
 	});
 };
-
 
 exports.NetaphorConnector = NetaphorConnector;
