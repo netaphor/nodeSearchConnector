@@ -27,46 +27,51 @@ NetaphorConnector.prototype.restUrls = {
 // Query the search index
 NetaphorConnector.prototype.search = function (queryString, callBack) {
 	'use strict';
-	var options = {};
-	options.callBack = callBack;
-	options.query = this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.select + queryString;
+	var options = {
+		callBack: callBack,
+		query: this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.select + queryString
+	};
 	this.doRequest(options);
 };
 
 // Post data to the search index
 NetaphorConnector.prototype.update = function (postData, callBack) {
 	'use strict';
-	var options = {};
-	options.callBack = callBack;
-	options.query = this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.update;
-	options.postData = postData;
+	var options = {
+		callBack: callBack,
+		query: this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.update,
+		postData: postData
+	};
 	this.doRequest(options);
 };
 
 // Commit any chages made to the search index
 NetaphorConnector.prototype.commit = function (callBack) {
 	'use strict';
-	var options = {};
-	options.callBack = callBack;
-	options.query = this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.commit;
+	var options = {
+		callBack: callBack,
+		query: this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.commit
+	};
 	this.doRequest(options);
 };
 
 // Optimize the search index
 NetaphorConnector.prototype.optimize = function (callBack) {
 	'use strict';
-	var options = {};
-	options.callBack = callBack;
-	options.query = this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.optimize;
+	var options = {
+		callBack: callBack,
+		query: this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.optimize
+	};
 	this.doRequest(options);
 };
 
 // Delete an item from the search index
 NetaphorConnector.prototype.deleteItem = function (itemId, callBack) {
 	'use strict';
-	var options = {};
-	options.callBack = callBack;
-	options.query = this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.optimize;
+	var options = {
+		callBack: callBack,
+		query: this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.optimize
+	};
 	this.doRequest(options);
 };
 
@@ -97,7 +102,7 @@ NetaphorConnector.prototype.doRequest = function (options) {
 				error = {
 					msg: 'Non 200 response',
 					statusCode: res.statusCode
-				}
+				};
 			}
 			options.callBack(error, body);
 		}
