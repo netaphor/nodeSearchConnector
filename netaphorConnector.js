@@ -1,8 +1,8 @@
 var request = require('request'),
     _ = require('lodash');
 
-// Define the NetaphorConnector class used for communication with a Netaphor server
-var NetaphorConnector =  function (config) {
+// Define the Connector class used for communication with a Netaphor server
+var Connector =  function (config) {
     'use strict';
     this.state = {
         searchServer:       'www.netaphorsearch.com',
@@ -14,7 +14,7 @@ var NetaphorConnector =  function (config) {
 };
 
 // The list if REST urls used for communication with the Netaphor search servers
-NetaphorConnector.prototype.restUrls = {
+Connector.prototype.restUrls = {
     rootPath:           "/search",
     commit:             "/update/commit",
     optimize:           "/update/optimize",
@@ -25,7 +25,7 @@ NetaphorConnector.prototype.restUrls = {
 };
 
 // Query the search index
-NetaphorConnector.prototype.search = function (queryString, callBack) {
+Connector.prototype.search = function (queryString, callBack) {
     'use strict';
     var options = {
         callBack: callBack,
@@ -35,7 +35,7 @@ NetaphorConnector.prototype.search = function (queryString, callBack) {
 };
 
 // Post data to the search index
-NetaphorConnector.prototype.update = function (postData, callBack) {
+Connector.prototype.update = function (postData, callBack) {
     'use strict';
     var options = {
         callBack: callBack,
@@ -46,7 +46,7 @@ NetaphorConnector.prototype.update = function (postData, callBack) {
 };
 
 // Commit any chages made to the search index
-NetaphorConnector.prototype.commit = function (callBack) {
+Connector.prototype.commit = function (callBack) {
     'use strict';
     var options = {
         callBack: callBack,
@@ -56,7 +56,7 @@ NetaphorConnector.prototype.commit = function (callBack) {
 };
 
 // Optimize the search index
-NetaphorConnector.prototype.optimize = function (callBack) {
+Connector.prototype.optimize = function (callBack) {
     'use strict';
     var options = {
         callBack: callBack,
@@ -66,17 +66,18 @@ NetaphorConnector.prototype.optimize = function (callBack) {
 };
 
 // Delete an item from the search index
-NetaphorConnector.prototype.deleteItem = function (itemId, callBack) {
+Connector.prototype.deleteItem = function (itemId, callBack) {
     'use strict';
     var options = {
         callBack: callBack,
-        query: this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.del
+        query: this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.del,
+        postData: '<delete><id>' + itemId + '</id></delete>'
     };
     this.doRequest(options);
 };
 
 // Handle the HTTP communitcation with the search servers
-NetaphorConnector.prototype.doRequest = function (options) {
+Connector.prototype.doRequest = function (options) {
     'use strict';
     var requestConfig = {};
 
@@ -109,4 +110,4 @@ NetaphorConnector.prototype.doRequest = function (options) {
     });
 };
 
-exports.NetaphorConnector = NetaphorConnector;
+exports.Connector = Connector;

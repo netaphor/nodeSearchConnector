@@ -1,6 +1,6 @@
 {
   "name": "netaphor-search-client",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A module for easy communication with the Netaphor search API",
   "main": "netaphorConnector.js",
   "scripts": {
@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "request": "2.27.x",
-    "underscore": "~1.5.2",
     "lodash": "~2.4.1"
   },
   "keywords": [
