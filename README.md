@@ -13,9 +13,9 @@ A Node client for the Netaphor Search API.
 * [examples](#examples)
 
 
-## Methods
 
-### <a name="Instantiation"></a> Instantiation
+
+## <a name="Instantiation"></a> Instantiation
 
 To include in node:
 
@@ -29,6 +29,7 @@ Creating a new connector:
  
 >`config` an object with the following properties `username` (String), `password` (String), `clientId` (String)
 
+## Methods
 ### <a name="search"></a> .search()
 Query a hosted Solr search index 
 
