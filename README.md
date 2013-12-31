@@ -19,11 +19,11 @@ A Node client for the Netaphor Search API.
 
 To include in node:
 
->	var neta4 = require('netaphor-search-client');
+>	`var neta4 = require('netaphor-search-client')`;
 
 Creating a new connector:
 
->	var searchConnector = new neta4.Connector(config);
+>	`var searchConnector = new neta4.Connector(config)`;
 
 ###### Parameters:
  
