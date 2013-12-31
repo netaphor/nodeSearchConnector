@@ -34,7 +34,7 @@ Query a hosted Solr search index
 
 ###### Syntax:
 
->	searchConnector.search(searchQuery, callback)
+>	`searchConnector.search(searchQuery, callback)`
 
 ###### Parameters:
 > `searchQuery` the full search query as a String including including a "?" at the beginning.
@@ -46,7 +46,7 @@ Add or modify data in the Solr search index
 
 ###### Syntax:
 
->	searchConnector.update(postData, callback)
+>	`searchConnector.update(postData, callback)`
 
 ###### Parameters:
 > `postData` a String in either JSON or XML format used to update or populate the search index.
@@ -56,7 +56,7 @@ Add or modify data in the Solr search index
 ### <a name="optimize"></a> .optimize()
 Used to optimize the Solr search index
 
->	searchConnector.optimize(callback)
+>	`searchConnector.optimize(callback)`
 
 ###### Parameters:
 > `callback`a function called when the search server responds which accepts two parameters; `error` and `response`. `response` being the body of the http response from the search server.
@@ -67,7 +67,7 @@ Delete an item from the Solr search index using its id
 
 ###### Syntax:
 
->	searchConnector.update(itemId, callback)
+>	`searchConnector.update(itemId, callback)`
 
 ###### Parameters:
 > `itemId` a String or Integer which is the items id
@@ -81,7 +81,7 @@ Commit changes to the Solr search index
 
 ###### Syntax:
 
->	searchConnector.commit(callback)
+>	`searchConnector.commit(callback)`
 
 ###### Parameters:
 > `callback`a function called when the search server responds which accepts two parameters; `error` and `response`. `response` being the body of the http response from the search server.
