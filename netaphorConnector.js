@@ -1,7 +1,7 @@
 'use strict';
 var request = require('request'),
-    qs = require('querystring'),
-    _ = require('lodash');
+    qs		= require('querystring'),
+    _		= require('lodash');
 
 // Define the Connector class used for communication with a Netaphor server
 var Connector =  function (config) {
@@ -31,7 +31,11 @@ Connector.prototype.search = function (query, callBack) {
     var q = query;
 
     if (query instanceof Object) {
-        q = qs.unescape(qs.stringify(query));
+        q = '?' + qs.unescape(qs.stringify(query));
+    }
+
+    if (q.indexOf('?') !== 0) {
+        q = '?' + q;
     }
 
     var options = {

@@ -38,9 +38,9 @@ Query a hosted Solr search index
 >	`searchConnector.search(searchQuery, callback)`
 
 ###### Parameters:
-> `searchQuery` the full search query as a String including including a "?" at the beginning.
+> `searchQuery` the full search query as a String or an object. If using a string be sure to include a "?" at the beginning.
 >
-> `callback`a callback function called when the search server responds which accepts two parameters; `error` and `response`. `response` being the body of the http response from the search server.
+> `callback` a callback function called when the search server responds which accepts two parameters; `error` and `response`. `response` being the body of the http response from the search server.
 
 ### <a name="update"></a> .update()
 Add or modify data in the Solr search index
