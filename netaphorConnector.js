@@ -1,9 +1,11 @@
+'use strict';
 var request = require('request'),
+    qs = require('querystring'),
     _ = require('lodash');
 
 // Define the Connector class used for communication with a Netaphor server
 var Connector =  function (config) {
-    'use strict';
+    
     this.state = {
         searchServer:       'www.netaphorsearch.com',
         clientId:           '',
@@ -25,18 +27,23 @@ Connector.prototype.restUrls = {
 };
 
 // Query the search index
-Connector.prototype.search = function (queryString, callBack) {
-    'use strict';
+Connector.prototype.search = function (query, callBack) {
+    var q = query;
+
+    if (query instanceof Object) {
+        q = qs.unescape(qs.stringify(query));
+    }
+
     var options = {
         callBack: callBack,
-        query: this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.select + queryString
+        query: this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.select + q
     };
+
     this.doRequest(options);
 };
 
 // Post data to the search index
 Connector.prototype.update = function (postData, callBack) {
-    'use strict';
     var options = {
         callBack: callBack,
         query: this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.update,
@@ -47,7 +54,6 @@ Connector.prototype.update = function (postData, callBack) {
 
 // Commit any chages made to the search index
 Connector.prototype.commit = function (callBack) {
-    'use strict';
     var options = {
         callBack: callBack,
         query: this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.commit
@@ -57,7 +63,6 @@ Connector.prototype.commit = function (callBack) {
 
 // Optimize the search index
 Connector.prototype.optimize = function (callBack) {
-    'use strict';
     var options = {
         callBack: callBack,
         query: this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.optimize
@@ -67,7 +72,6 @@ Connector.prototype.optimize = function (callBack) {
 
 // Delete an item from the search index
 Connector.prototype.deleteItem = function (itemId, callBack) {
-    'use strict';
     var options = {
         callBack: callBack,
         query: this.restUrls.rootPath + '/' + this.state.clientId + this.restUrls.del,
@@ -78,7 +82,6 @@ Connector.prototype.deleteItem = function (itemId, callBack) {
 
 // Handle the HTTP communitcation with the search servers
 Connector.prototype.doRequest = function (options) {
-    'use strict';
     var requestConfig = {};
 
     // If we are updating the search index switch to POST
